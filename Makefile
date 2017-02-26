@@ -1,7 +1,11 @@
-obj-m += nokia_i2c.o
+obj-m := solidusmodule.o
+
+KERNEL_DIR_ARC=/usr/lib/modules/$(shell uname -r)
 
 all:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+	$(MAKE) -C $(KERNEL_DIR_ARC) SUBDIRS=$(PWD) modules
+
+.PHONY: clean
 
 clean:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	rm -rf *.o *.ko *.mod.* *.symveres *.order
