@@ -23,6 +23,28 @@ dev_t dev_num;          // Whill hold the major number the kernel give us.
                         // name--> appere in /proc/devices
 #define DEVICE_NAME     "solidusmodule"
 
+// --- Declaration of methods for the kernel to use ----
+// (7) Called on deveice_file open.
+int ()
+{
+    
+}
+
+
+
+// --- END of declarations
+
+
+// (6) Thell the kernel withc function to call when user operates on our device
+// file
+struct file_operations fops ={
+    .owner = THIS_MODULE,               // Prevents the module to be unloaded when operations is in use
+    .open = device_open,                // points to a method to call when oening the device
+    .relese = device_close,             // points to a method to call when closing the device
+    .write = device_write,              // points to a method to call when writing to the divice
+    .read = device_read                 // points to a method to call when reading the device
+}
+
 static int driver_entry(void)
 {
     // (3) Register the device with the system, this is a two stepp process.
@@ -46,7 +68,7 @@ static int driver_entry(void)
 
     // 2. Now the secound step is to alocate the devicedriver to use the file.
     mcdev = cdev_alloc();           // Creates our cdev struct.
-//    mcdev->ops = &fops;           // Noc created yet but user for file
+    mcdev->ops = &fops;           // Noc created yet but user for file
 //    operations
     mcdev->owner = THIS_MODULE;     // << What is this?
     // Now we have created our struct its time to add it to the kernel.
